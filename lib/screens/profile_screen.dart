@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       TextButton.icon(
                         onPressed: () async {
                           // Show avatar picker dialog
-                          final result = await showDialog<Map<String, dynamic>>(
+                          await showDialog<Map<String, dynamic>>(
                             context: context,
                             builder: (ctx) => AvatarPicker(
                               selectedAvatar: _profile.avatarOption,
