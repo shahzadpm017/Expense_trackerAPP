@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Dialog widget for adding new expense categories
 class AddCategoryDialog extends StatefulWidget {
   const AddCategoryDialog({super.key});
 
@@ -8,34 +9,39 @@ class AddCategoryDialog extends StatefulWidget {
 }
 
 class _AddCategoryDialogState extends State<AddCategoryDialog> {
+  // Controller for category name input
   final _nameController = TextEditingController();
+
+  // Currently selected emoji icon
   String _selectedIcon = '🏷️';
 
+  // List of available emoji icons for categories
   final List<String> _availableIcons = [
-    '🏷️',
-    '🛒',
-    '🍔',
-    '✈️',
-    '🎮',
-    '📚',
-    '🏠',
-    '🚗',
-    '💊',
-    '👕',
-    '🎵',
-    '🎁',
-    '💡',
-    '📱',
-    '⚡',
-    '🎨',
-    '🏃',
-    '🍿',
-    '🎭',
-    '💼',
+    '🏷️', // Label (default)
+    '🛒', // Shopping
+    '🍔', // Food
+    '✈️', // Travel
+    '🎮', // Gaming
+    '📚', // Education
+    '🏠', // Home
+    '🚗', // Transport
+    '💊', // Health
+    '👕', // Clothing
+    '🎵', // Entertainment
+    '🎁', // Gifts
+    '💡', // Utilities
+    '📱', // Technology
+    '⚡', // Energy
+    '🎨', // Art
+    '🏃', // Sports
+    '🍿', // Movies
+    '🎭', // Events
+    '💼', // Business
   ];
 
   @override
   void dispose() {
+    // Clean up controller
     _nameController.dispose();
     super.dispose();
   }
@@ -47,6 +53,7 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Category name input field
           TextField(
             controller: _nameController,
             decoration: const InputDecoration(
@@ -57,6 +64,7 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
           const SizedBox(height: 16),
           const Text('Select Icon'),
           const SizedBox(height: 8),
+          // Grid of emoji icons
           Container(
             height: 150,
             width: 300,
@@ -104,12 +112,14 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
         ],
       ),
       actions: [
+        // Cancel button
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
           child: const Text('Cancel'),
         ),
+        // Add button (enabled only if name is not empty)
         FilledButton(
           onPressed: () {
             final name = _nameController.text.trim();

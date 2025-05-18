@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
 
+// Widget that displays a single expense item with a beautiful card layout
 class ExpenseItem extends StatelessWidget {
+  // Constructor requiring an expense object
   const ExpenseItem({super.key, required this.expense});
 
+  // The expense to display
   final Expense expense;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Container(
+        // Apply gradient background and rounded corners
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
@@ -26,8 +30,10 @@ class ExpenseItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title and amount row
               Row(
                 children: [
+                  // Expense title with bold style
                   Expanded(
                     child: Text(
                       expense.title,
@@ -36,6 +42,7 @@ class ExpenseItem extends StatelessWidget {
                           ),
                     ),
                   ),
+                  // Amount badge with custom styling
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -59,8 +66,10 @@ class ExpenseItem extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
+              // Category, date and metadata row
               Row(
                 children: [
+                  // Category icon with background
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -76,6 +85,7 @@ class ExpenseItem extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Formatted date
                   Text(
                     expense.formattedDate,
                     style: TextStyle(
@@ -83,6 +93,7 @@ class ExpenseItem extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+                  // Category name in uppercase
                   Text(
                     expense.category.name.toUpperCase(),
                     style: TextStyle(

@@ -4,14 +4,19 @@ import '../models/expense.dart';
 import '../models/categories_manager.dart';
 import 'add_category_dialog.dart';
 
+// Widget that provides a form to add new expenses
 class NewExpense extends StatefulWidget {
+  // Constructor requiring callback and categories manager
   const NewExpense({
     super.key,
     required this.onAddExpense,
     required this.categoriesManager,
   });
 
+  // Callback function when a new expense is added
   final void Function(Expense expense) onAddExpense;
+
+  // Manager for handling expense categories
   final CategoriesManager categoriesManager;
 
   @override
@@ -19,20 +24,29 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
+  // Controllers for form input fields
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+
+  // Selected date for the expense
   DateTime? _selectedDate;
+
+  // Selected category for the expense
   ExpenseCategory? _selectedCategory;
+
+  // Date formatter for displaying dates
   final _formatter = DateFormat.yMd();
 
   @override
   void initState() {
     super.initState();
+    // Set default category if available
     if (widget.categoriesManager.categories.isNotEmpty) {
       _selectedCategory = widget.categoriesManager.categories.first;
     }
   }
 
+  // Show date picker dialog
   void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
@@ -47,6 +61,7 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  // Show dialog to add a new category
   void _showAddCategoryDialog() async {
     final result = await showDialog<Map<String, String>>(
       context: context,
@@ -61,9 +76,12 @@ class _NewExpenseState extends State<NewExpense> {
     }
   }
 
+  // Validate and submit the expense data
   void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+
+    // Show error dialog if any field is invalid
     if (_titleController.text.trim().isEmpty ||
         amountIsInvalid ||
         _selectedDate == null ||
@@ -88,6 +106,7 @@ class _NewExpenseState extends State<NewExpense> {
       return;
     }
 
+    // Create and submit new expense
     final newExpense = Expense(
       title: _titleController.text,
       amount: enteredAmount,
@@ -100,6 +119,7 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   void dispose() {
+    // Clean up controllers
     _titleController.dispose();
     _amountController.dispose();
     super.dispose();
@@ -116,6 +136,7 @@ class _NewExpenseState extends State<NewExpense> {
         padding: EdgeInsets.fromLTRB(16, 16, 16, keyboardSpace + 16),
         child: Column(
           children: [
+            // Title input field
             TextField(
               controller: _titleController,
               maxLength: 50,
@@ -128,6 +149,7 @@ class _NewExpenseState extends State<NewExpense> {
             const SizedBox(height: 4),
             Row(
               children: [
+                // Amount input field
                 Expanded(
                   child: TextField(
                     controller: _amountController,
@@ -141,6 +163,7 @@ class _NewExpenseState extends State<NewExpense> {
                   ),
                 ),
                 const SizedBox(width: 8),
+                // Date picker field
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -178,6 +201,7 @@ class _NewExpenseState extends State<NewExpense> {
               ],
             ),
             const SizedBox(height: 16),
+            // Category selector and actions
             SizedBox(
               width: width,
               child: Wrap(
@@ -185,6 +209,7 @@ class _NewExpenseState extends State<NewExpense> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 8,
                 children: [
+                  // Category dropdown
                   if (categories.isNotEmpty)
                     Container(
                       constraints: BoxConstraints(maxWidth: width * 0.4),
@@ -217,6 +242,7 @@ class _NewExpenseState extends State<NewExpense> {
                         },
                       ),
                     ),
+                  // Add new category button
                   TextButton.icon(
                     onPressed: _showAddCategoryDialog,
                     icon: const Icon(Icons.add, size: 18),
@@ -226,9 +252,11 @@ class _NewExpenseState extends State<NewExpense> {
                       visualDensity: VisualDensity.compact,
                     ),
                   ),
+                  // Action buttons
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Cancel button
                       TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
@@ -238,6 +266,7 @@ class _NewExpenseState extends State<NewExpense> {
                         child: const Text('Cancel'),
                       ),
                       const SizedBox(width: 8),
+                      // Save button
                       FilledButton(
                         onPressed: _submitExpenseData,
                         style: FilledButton.styleFrom(

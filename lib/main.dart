@@ -1,28 +1,32 @@
+// Main entry point of the Flutter application
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
+// The main function that starts the app
 void main() {
   runApp(const ExpenseTrackerApp());
 }
 
+// Root widget of the application
 class ExpenseTrackerApp extends StatelessWidget {
   const ExpenseTrackerApp({super.key});
 
-  // Custom color constants
-  static const _primaryColor = Color(0xFF6366F1);
-  static const _secondaryColor = Color(0xFFA5B4FC);
-  static const _tertiaryColor = Color(0xFFE0E7FF);
-  static const _errorColor = Color(0xFFEF4444);
-  static const _backgroundColor = Color(0xFFF8FAFC);
-  static const _surfaceColor = Colors.white;
-  static const _darkBackgroundColor = Color(0xFF1A1A1A);
-  static const _darkSurfaceColor = Color(0xFF2D2D2D);
+  // Custom color constants for the app theme
+  static const _primaryColor = Color(0xFF6366F1); // Main brand color (Indigo)
+  static const _secondaryColor = Color(0xFFA5B4FC); // Secondary accent color
+  static const _tertiaryColor = Color(0xFFE0E7FF); // Light accent color
+  static const _errorColor = Color(0xFFEF4444); // Error/warning color (Red)
+  static const _backgroundColor = Color(0xFFF8FAFC); // Light mode background
+  static const _surfaceColor = Colors.white; // Light mode surface color
+  static const _darkBackgroundColor = Color(0xFF1A1A1A); // Dark mode background
+  static const _darkSurfaceColor = Color(0xFF2D2D2D); // Dark mode surface color
 
+  // Configure the light theme for the app
   ThemeData _buildLightTheme() {
     return ThemeData(
-      useMaterial3: true,
+      useMaterial3: true, // Enable Material Design 3
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _primaryColor,
+        seedColor: _primaryColor, // Generate color scheme from primary color
         secondary: _secondaryColor,
         tertiary: _tertiaryColor,
         error: _errorColor,
@@ -30,6 +34,7 @@ class ExpenseTrackerApp extends StatelessWidget {
         surface: _surfaceColor,
         brightness: Brightness.light,
       ),
+      // Configure AppBar appearance for light theme
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -40,6 +45,7 @@ class ExpenseTrackerApp extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      // Configure Card appearance for light theme
       cardTheme: CardTheme(
         color: _surfaceColor,
         elevation: 2,
@@ -48,6 +54,7 @@ class ExpenseTrackerApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
+      // Configure FloatingActionButton appearance for light theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: _primaryColor,
         foregroundColor: Colors.white,
@@ -106,6 +113,7 @@ class ExpenseTrackerApp extends StatelessWidget {
     );
   }
 
+  // Configure the dark theme for the app
   ThemeData _buildDarkTheme() {
     return ThemeData(
       useMaterial3: true,
@@ -118,6 +126,7 @@ class ExpenseTrackerApp extends StatelessWidget {
         surface: _darkSurfaceColor,
         brightness: Brightness.dark,
       ),
+      // Dark theme specific configurations
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -136,14 +145,7 @@ class ExpenseTrackerApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: _primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
+      // Text styles for dark theme
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           color: Colors.white,
@@ -160,6 +162,7 @@ class ExpenseTrackerApp extends StatelessWidget {
           color: Color(0xFF94A3B8),
         ),
       ),
+      // Input field styling for dark theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: _darkSurfaceColor,
@@ -183,6 +186,7 @@ class ExpenseTrackerApp extends StatelessWidget {
           vertical: 12,
         ),
       ),
+      // Snackbar styling for dark theme
       snackBarTheme: SnackBarThemeData(
         backgroundColor: _darkSurfaceColor,
         contentTextStyle: const TextStyle(color: Colors.white),
@@ -194,15 +198,16 @@ class ExpenseTrackerApp extends StatelessWidget {
     );
   }
 
+  // Build the MaterialApp widget with configured themes
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Hide debug banner
       title: 'Expense Tracker',
-      theme: _buildLightTheme(),
-      darkTheme: _buildDarkTheme(),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+      theme: _buildLightTheme(), // Set light theme
+      darkTheme: _buildDarkTheme(), // Set dark theme
+      themeMode: ThemeMode.system, // Use system theme preference
+      home: const HomeScreen(), // Set initial screen
     );
   }
 }

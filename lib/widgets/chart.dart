@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/expense.dart';
 
+// Widget that displays a beautiful animated bar chart of daily expenses
 class Chart extends StatefulWidget {
+  // Constructor requiring list of expenses
   const Chart({super.key, required this.expenses});
 
+  // List of expenses to visualize
   final List<Expense> expenses;
 
   @override
@@ -12,11 +15,13 @@ class Chart extends StatefulWidget {
 }
 
 class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
+  // Animation controller for bar chart animation
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+    // Initialize animation controller with 1-second duration
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -30,6 +35,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  // Calculate daily expenses for the last 7 days
   List<DailyExpense> get dailyExpenses {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -54,12 +60,14 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
       }
     }
 
+    // Convert to list and sort by date
     return groupedExpenses.entries
         .map((entry) => DailyExpense(date: entry.key, amount: entry.value))
         .toList()
       ..sort((a, b) => a.date.compareTo(b.date));
   }
 
+  // Get the highest daily expense amount (used for scaling bars)
   double get maxExpense {
     final max = dailyExpenses.fold<double>(
       0,
@@ -68,6 +76,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
     return max > 0 ? max : 1;
   }
 
+  // Calculate total expenses for all days
   double get totalExpenses {
     return widget.expenses.fold<double>(
       0,
@@ -81,6 +90,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
     final dateFormatter = DateFormat.E();
     final expenses = dailyExpenses;
 
+    // Show empty state if no expenses
     if (totalExpenses == 0) {
       return Card(
         elevation: 8,
@@ -93,6 +103,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Chart header with title and total
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -115,6 +126,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
                       ),
                     ],
                   ),
+                  // Total amount badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -125,7 +137,9 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '₹0',
+                      totalExpenses >= 10000
+                          ? '${(totalExpenses / 1000).toStringAsFixed(1)}k'
+                          : '₹${totalExpenses.toStringAsFixed(0)}',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -135,35 +149,93 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
                 ],
               ),
               const SizedBox(height: 24),
+              // Bar chart section
               SizedBox(
                 height: 200,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.show_chart,
-                        size: 64,
-                        color: colorScheme.primary.withOpacity(0.5),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No expenses recorded yet',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Your spending trend will appear here',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: expenses.map((expense) {
+                    final isToday = expense.date.day == DateTime.now().day;
+                    final barHeight = expense.amount / maxExpense;
+
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Animated bar with amount
+                            AnimatedBuilder(
+                              animation: _animationController,
+                              builder: (context, child) {
+                                return Column(
+                                  children: [
+                                    // Show amount if greater than 0
+                                    if (expense.amount > 0)
+                                      Text(
+                                        expense.amount >= 10000
+                                            ? '${(expense.amount / 1000).toStringAsFixed(1)}k'
+                                            : '₹${expense.amount.toStringAsFixed(0)}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: isToday
+                                                  ? colorScheme.primary
+                                                  : colorScheme
+                                                      .onSurfaceVariant,
+                                              fontWeight: isToday
+                                                  ? FontWeight.bold
+                                                  : null,
+                                              fontSize: expense.amount >= 10000
+                                                  ? 10
+                                                  : 12,
+                                            ),
+                                      ),
+                                    const SizedBox(height: 8),
+                                    // Animated bar with gradient
+                                    Container(
+                                      height: 150 *
+                                          barHeight *
+                                          _animationController.value,
+                                      width: 20,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                          colors: [
+                                            colorScheme.primary,
+                                            colorScheme.primary
+                                                .withOpacity(0.5),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
+                            const SizedBox(height: 8),
+                            // Day label
+                            Text(
+                              dateFormatter.format(expense.date),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: isToday
+                                        ? colorScheme.primary
+                                        : colorScheme.onSurfaceVariant,
+                                    fontWeight:
+                                        isToday ? FontWeight.bold : null,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -331,6 +403,7 @@ class _ChartState extends State<Chart> with SingleTickerProviderStateMixin {
   }
 }
 
+// Helper class to store daily expense data
 class DailyExpense {
   const DailyExpense({required this.date, required this.amount});
   final DateTime date;
